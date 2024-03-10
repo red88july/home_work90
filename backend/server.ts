@@ -13,7 +13,7 @@ app.use(router);
 app.use(cors());
 
 
-router.ws('/chat', (ws, req) => {
+router.ws('/canvas', (ws, req) => {
     console.log('client connected');
 });
 
