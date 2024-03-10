@@ -1,6 +1,8 @@
 import express from 'express';
 import expressWs from 'express-ws';
 import cors from 'cors';
+import crypto from "crypto";
+import { ActiveConnections, IncomingFigure, Figure } from "./types";
 
 const app = express();
 const router = express.Router();
@@ -12,11 +14,43 @@ const port = 8000;
 app.use(router);
 app.use(cors());
 
+const activeConnections: ActiveConnections = {};
 
-router.ws('/canvas', (ws, req) => {
-    console.log('client connected');
+router.ws('/canvasApp', (ws, req) => {
+    const id = crypto.randomUUID();
+    console.log('client connected! id=', id);
+    activeConnections[id] = ws;
+
+    let pixels: Figure[] = [
+        { x: 100, y: 250, color: 'red' },
+        { x: 250, y: 350, color: 'orange' }
+    ];
+
+    ws.send(JSON.stringify({type: 'CURRENT_PIXELS', payload: pixels}));
+
+    ws.on('message', (message: string) => {
+        console.log(message.toString());
+        const decodedMessage = JSON.parse(message) as IncomingFigure;
+
+       if (decodedMessage.type === 'SET_FIGURE') {
+            Object.values(activeConnections).forEach(connection => {
+                const outgoingMessage = {type: 'NEW_FIGURE', payload: {
+                        pixels: decodedMessage.payload,
+                    }}
+                connection.send(JSON.stringify(outgoingMessage));
+            })
+        }
+    });
+
+    ws.on('close', () => {
+        console.log('client disconnected! id=', id);
+        delete activeConnections[id];
+    });
 });
 
 app.listen(port, () => {
     console.log(`Server started on ${port} port!`);
 });
+
+
+
