@@ -25,9 +25,10 @@ function App() {
             const decodedDots = JSON.parse(event.data) as IncomingDots;
 
             if (decodedDots.type === 'CURRENT_DOTS') {
-                draw(context, decodedDots.payload)
+                draw(context, decodedDots.payload);
             } else if (decodedDots.type === 'NEW_DOTS') {
                 setDots(decodedDots.payload);
+                draw(context, decodedDots.payload);
             }
         });
 
@@ -47,7 +48,7 @@ function App() {
         if (!context) {
             return;
         }
-        context.clearRect(0, 0, canvas.width, canvas.height);
+
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
