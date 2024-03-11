@@ -28,14 +28,15 @@ router.ws('/canvasApp', (ws, req) => {
 
     ws.send(JSON.stringify({type: 'CURRENT_PIXELS', payload: pixels}));
 
-    ws.on('message', (message: string) => {
-        console.log(message.toString());
-        const decodedMessage = JSON.parse(message) as IncomingFigure;
+    ws.on('figure', (figure: string) => {
+        console.log('Server', figure.toString());
+        const decodedPixels = JSON.parse(figure) as IncomingFigure;
 
-       if (decodedMessage.type === 'SET_FIGURE') {
+       if (decodedPixels.type === 'SET_FIGURE') {
             Object.values(activeConnections).forEach(connection => {
+
                 const outgoingMessage = {type: 'NEW_FIGURE', payload: {
-                        pixels: decodedMessage.payload,
+                        pixels: pixels.push(decodedPixels.payload),
                     }}
                 connection.send(JSON.stringify(outgoingMessage));
             })

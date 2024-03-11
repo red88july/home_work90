@@ -12,5 +12,5 @@ export interface Figure {
 
 export interface IncomingFigure {
     type: string;
-    payload: Figure[];
+    payload: Figure;
 }
