@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, MouseEventHandler } from "react";
-import { IncomingFigure, PixelsFigure } from "./types";
+import { IncomingLines, LinesFigures } from "./types";
 
 function App() {
     const ws = useRef<WebSocket | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [figures, setFigures] = useState<PixelsFigure[]>([]);
+    const [lines, setLines] = useState<LinesFigures[]>([]);
 
     useEffect(() => {
         ws.current = new WebSocket('ws://localhost:8000/canvasApp');
@@ -24,14 +24,14 @@ function App() {
         ws.current.addEventListener('message', (event) => {
             console.log('On App', event.data);
 
-            const decodedMessage = JSON.parse(event.data) as IncomingFigure;
+            const decodedLines = JSON.parse(event.data) as IncomingLines;
 
-            if (decodedMessage.type === 'CURRENT_PIXELS') {
-                setFigures(decodedMessage.payload);
-                draw(context, decodedMessage.payload);
-            } else if (decodedMessage.type === 'NEW_FIGURE') {
-                setFigures(prevFigures => [...prevFigures, decodedMessage.payload]);
-                draw(context, figures.concat(decodedMessage.payload));
+            if (decodedLines.type === 'CURRENT_LINES') {
+                setLines(decodedLines.payload);
+                draw(context, decodedLines.payload);
+            } else if (decodedLines.type === 'NEW_LINES') {
+                setLines(decodedLines.payload);
+                draw(context, decodedLines.payload);
             }
         });
 
@@ -56,19 +56,19 @@ function App() {
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        const newFigure: PixelsFigure = { x, y, color: 'blue' };
-        const updatedFigures = [...figures, newFigure];
+        const newLine: LinesFigures = { x, y, color: 'blue' };
+        const updatedLines = [...lines, newLine];
 
-        setFigures(updatedFigures);
-        draw(context, updatedFigures);
+        setLines(updatedLines);
+        draw(context, updatedLines);
 
-        const message = { type: 'SET_FIGURE', payload: newFigure };
+        const message = { type: 'SET_LINES', payload: updatedLines };
         if (ws.current) {
             ws.current.send(JSON.stringify(message));
         }
     };
 
-    const draw = (context: CanvasRenderingContext2D, pixels: PixelsFigure[]) => {
+    const draw = (context: CanvasRenderingContext2D, pixels: LinesFigures[]) => {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
         for (let i = 0; i < pixels.length; i++) {

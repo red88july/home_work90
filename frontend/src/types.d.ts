@@ -1,17 +1,17 @@
-export interface PixelsFigure {
+export interface LinesFigures {
     x: number;
     y: number;
     color: string
 }
 
-export interface IncomingFromServerFigure {
-    type: 'CURRENT_PIXELS';
-    payload: PixelsFigure[];
+export interface IncomingFromServerLines {
+    type: 'CURRENT_LINES';
+    payload: LinesFigures[];
 }
 
-export interface UpdatedFigure {
-    type: 'NEW_FIGURE';
-    payload: PixelsFigure[];
+export interface UpdatedFLINES {
+    type: 'NEW_LINES';
+    payload: LinesFigures[];
 }
 
-export type IncomingFigure = IncomingFromFigure;
+export type IncomingLines = IncomingFromServerLines | UpdatedFLINES;

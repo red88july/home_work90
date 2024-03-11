@@ -2,7 +2,7 @@ import express from 'express';
 import expressWs from 'express-ws';
 import cors from 'cors';
 import crypto from "crypto";
-import { ActiveConnections, IncomingFigure, Figure } from "./types";
+import { ActiveConnections, IncomingLines, Lines } from "./types";
 
 const app = express();
 const router = express.Router();
@@ -21,24 +21,20 @@ router.ws('/canvasApp', (ws, req) => {
     console.log('client connected! id=', id);
     activeConnections[id] = ws;
 
-    let pixels: Figure[] = [
+    let lines: Lines[] = [
         { x: 100, y: 250, color: 'red' },
-        { x: 250, y: 350, color: 'orange' }
+        { x: 100, y: 100, color: 'orange' }
     ];
 
-    ws.send(JSON.stringify({type: 'CURRENT_PIXELS', payload: pixels}));
+    ws.send(JSON.stringify({type: 'CURRENT_LINES', payload: lines}));
 
-    ws.on('figure', (figure: string) => {
-        console.log('Server', figure.toString());
-        const decodedPixels = JSON.parse(figure) as IncomingFigure;
+    ws.on('message', (message: string) => {
+        const decodedLines = JSON.parse(message) as IncomingLines;
 
-       if (decodedPixels.type === 'SET_FIGURE') {
+        if (decodedLines.type === 'SET_LINES') {
             Object.values(activeConnections).forEach(connection => {
-
-                const outgoingMessage = {type: 'NEW_FIGURE', payload: {
-                        pixels: pixels.push(decodedPixels.payload),
-                    }}
-                connection.send(JSON.stringify(outgoingMessage));
+                const outgoingLines = {type: 'NEW_LINES', payload: decodedLines.payload}
+                connection.send(JSON.stringify(outgoingLines));
             })
         }
     });
@@ -52,6 +48,3 @@ router.ws('/canvasApp', (ws, req) => {
 app.listen(port, () => {
     console.log(`Server started on ${port} port!`);
 });
-
-
-
