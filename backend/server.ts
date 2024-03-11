@@ -21,7 +21,7 @@ router.ws('/canvasApp', (ws, req) => {
     console.log('client connected! id=', id);
     activeConnections[id] = ws;
 
-    let lines: Lines[] = [
+    const lines: Lines[] = [
         { x: 100, y: 250, color: 'red' },
         { x: 100, y: 100, color: 'orange' }
     ];

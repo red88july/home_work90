@@ -27,10 +27,8 @@ function App() {
             const decodedLines = JSON.parse(event.data) as IncomingLines;
 
             if (decodedLines.type === 'CURRENT_LINES') {
-                setLines(decodedLines.payload);
                 draw(context, decodedLines.payload);
             } else if (decodedLines.type === 'NEW_LINES') {
-                setLines(decodedLines.payload);
                 draw(context, decodedLines.payload);
             }
         });
@@ -56,7 +54,7 @@ function App() {
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        const newLine: LinesFigures = { x, y, color: 'blue' };
+        const newLine: LinesFigures = { x, y, color: 'red' };
         const updatedLines = [...lines, newLine];
 
         setLines(updatedLines);
@@ -68,11 +66,11 @@ function App() {
         }
     };
 
-    const draw = (context: CanvasRenderingContext2D, pixels: LinesFigures[]) => {
+    const draw = (context: CanvasRenderingContext2D, lines: LinesFigures[]) => {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-        for (let i = 0; i < pixels.length; i++) {
-            const point = pixels[i];
+        for (let i = 0; i < lines.length; i++) {
+            const point = lines[i];
             if (i === 0) {
                 context.beginPath();
                 context.moveTo(point.x, point.y);
