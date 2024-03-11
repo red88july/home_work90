@@ -1,11 +1,28 @@
+#canvas-box {
+    background-image: url("../assets/image/graph.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: 4px solid orangered;
+    border-radius: 10px;
+}
+
 .main-box {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    background-image: url("../assets/image/numbers.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 108%;
     margin: 3rem auto auto auto;
-    width: 500px;
-    height: 500px;
+    width: 400px;
+    height: 400px;
     padding: 10px;
     border: 2px solid black;
     border-radius: 10px;
+}
+h3 {
+    margin: 0;
 }

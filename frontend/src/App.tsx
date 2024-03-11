@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, MouseEventHandler } from "react";
+import {useEffect, useRef, useState, MouseEventHandler} from "react";
 import {DotsFigures, IncomingDots} from "./types";
 
 function App() {
@@ -52,18 +52,17 @@ function App() {
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        const newDot: DotsFigures = { x, y, color: 'red' };
+        const newDot: DotsFigures = {x, y, color: 'red'};
         const updatedDots = [...dots, newDot];
 
         setDots(updatedDots);
         draw(context, updatedDots)
 
-        const message = { type: 'SET_DOTS', payload: updatedDots };
+        const message = {type: 'SET_DOTS', payload: updatedDots};
         if (ws.current) {
             ws.current.send(JSON.stringify(message));
         }
     };
-
 
     const draw = (context: CanvasRenderingContext2D, dots: DotsFigures[]) => {
         const canvas = canvasRef.current;
@@ -81,7 +80,8 @@ function App() {
 
     return (
         <div className="main-box">
-            <canvas ref={canvasRef} id="canvas-box" width="480" height="480" onClick={handleClick}></canvas>
+            <canvas ref={canvasRef} id="canvas-box" style={{}} width="300"
+                    height="300" onClick={handleClick}></canvas>
         </div>
     );
 }

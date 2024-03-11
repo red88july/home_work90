@@ -22,8 +22,8 @@ router.ws('/canvasApp', (ws, req) => {
     activeConnections[id] = ws;
 
     const dots: Dots[] = [
-        { x: 300, y: 300, color: 'orange' },
-        { x: 400, y: 300, color: 'blue' }
+        { x: 150, y: 150, color: 'orange' },
+        { x: 200, y: 150, color: 'blue' }
     ];
 
     ws.send(JSON.stringify({type: 'CURRENT_DOTS', payload: dots}));
