@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, MouseEventHandler } from "react";
-import { IncomingLines, LinesFigures } from "./types";
+import {DotsFigures, IncomingDots} from "./types";
 
 function App() {
     const ws = useRef<WebSocket | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [lines, setLines] = useState<LinesFigures[]>([]);
+    const [dots, setDots] = useState<DotsFigures[]>([]);
 
     useEffect(() => {
         ws.current = new WebSocket('ws://localhost:8000/canvasApp');
@@ -22,14 +22,12 @@ function App() {
         ws.current.addEventListener('close', () => console.log('ws closed'));
 
         ws.current.addEventListener('message', (event) => {
-            console.log('On App', event.data);
+            const decodedDots = JSON.parse(event.data) as IncomingDots;
 
-            const decodedLines = JSON.parse(event.data) as IncomingLines;
-
-            if (decodedLines.type === 'CURRENT_LINES') {
-                draw(context, decodedLines.payload);
-            } else if (decodedLines.type === 'NEW_LINES') {
-                draw(context, decodedLines.payload);
+            if (decodedDots.type === 'CURRENT_DOTS') {
+                draw(context, decodedDots.payload)
+            } else if (decodedDots.type === 'NEW_DOTS') {
+                setDots(decodedDots.payload);
             }
         });
 
@@ -49,38 +47,35 @@ function App() {
         if (!context) {
             return;
         }
-
+        context.clearRect(0, 0, canvas.width, canvas.height);
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        const newLine: LinesFigures = { x, y, color: 'red' };
-        const updatedLines = [...lines, newLine];
+        const newDot: DotsFigures = { x, y, color: 'red' };
+        const updatedDots = [...dots, newDot];
 
-        setLines(updatedLines);
-        draw(context, updatedLines);
+        setDots(updatedDots);
+        draw(context, updatedDots)
 
-        const message = { type: 'SET_LINES', payload: updatedLines };
+        const message = { type: 'SET_DOTS', payload: updatedDots };
         if (ws.current) {
             ws.current.send(JSON.stringify(message));
         }
     };
 
-    const draw = (context: CanvasRenderingContext2D, lines: LinesFigures[]) => {
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-        for (let i = 0; i < lines.length; i++) {
-            const point = lines[i];
-            if (i === 0) {
-                context.beginPath();
-                context.moveTo(point.x, point.y);
-                context.lineWidth = 3;
-            } else {
-                context.lineTo(point.x, point.y);
+    const draw = (context: CanvasRenderingContext2D, dots: DotsFigures[]) => {
+        const canvas = canvasRef.current;
+        if (!canvas) {
+            return;
+        }
+        context.clearRect(0, 0, canvas.width, canvas.height);
 
-            }
-            context.strokeStyle = point.color;
-            context.stroke();
+        for (let i = 0; i < dots.length; i++) {
+            const point = dots[i];
+            context.fillStyle = point.color;
+            context.fillRect(point.x, point.y, 10, 10);
         }
     };
 

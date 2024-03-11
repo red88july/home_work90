@@ -2,7 +2,7 @@ import express from 'express';
 import expressWs from 'express-ws';
 import cors from 'cors';
 import crypto from "crypto";
-import { ActiveConnections, IncomingLines, Lines } from "./types";
+import {ActiveConnections, Dots, IncomingDots} from "./types";
 
 const app = express();
 const router = express.Router();
@@ -21,20 +21,20 @@ router.ws('/canvasApp', (ws, req) => {
     console.log('client connected! id=', id);
     activeConnections[id] = ws;
 
-    const lines: Lines[] = [
-        { x: 100, y: 250, color: 'red' },
-        { x: 100, y: 100, color: 'orange' }
+    const dots: Dots[] = [
+        { x: 300, y: 300, color: 'orange' },
+        { x: 400, y: 300, color: 'blue' }
     ];
 
-    ws.send(JSON.stringify({type: 'CURRENT_LINES', payload: lines}));
+    ws.send(JSON.stringify({type: 'CURRENT_DOTS', payload: dots}));
 
     ws.on('message', (message: string) => {
-        const decodedLines = JSON.parse(message) as IncomingLines;
+        const decodedDots = JSON.parse(message) as IncomingDots;
 
-        if (decodedLines.type === 'SET_LINES') {
+        if (decodedDots.type === 'SET_DOTS') {
             Object.values(activeConnections).forEach(connection => {
-                const outgoingLines = {type: 'NEW_LINES', payload: decodedLines.payload}
-                connection.send(JSON.stringify(outgoingLines));
+                const outgoingDots = {type: 'NEW_DOTS', payload: decodedDots.payload}
+                connection.send(JSON.stringify(outgoingDots));
             })
         }
     });

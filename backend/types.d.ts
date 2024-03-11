@@ -4,13 +4,13 @@ export interface ActiveConnections {
     [id: string]: WebSocket;
 }
 
-export interface Lines {
+export interface Dots {
     x: number;
     y: number;
     color: string;
 }
 
-export interface IncomingLines {
+export interface IncomingDots {
     type: string;
-    payload: Lines;
+    payload: Dots;
 }
