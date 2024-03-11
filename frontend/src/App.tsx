@@ -74,8 +74,10 @@ function App() {
             if (i === 0) {
                 context.beginPath();
                 context.moveTo(point.x, point.y);
+                context.lineWidth = 3;
             } else {
                 context.lineTo(point.x, point.y);
+
             }
             context.strokeStyle = point.color;
             context.stroke();
